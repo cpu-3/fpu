@@ -14,8 +14,8 @@ module test_cmp();
 
    initial begin
 	 	s=0;
-		for (i=0;i<16;i++) begin
-		m = {i[4:0], 18'b0};
+		for (i=0;i<256;i++) begin
+		m = {i[7:0], 14'b0};
 		e = 127;
 
    	xi = {s[0],e[7:0],m};
@@ -24,8 +24,8 @@ module test_cmp();
 
   	$display("%d,%d", x, y);
 		end
-		for (i=0;i<16;i++) begin
-		m = {i[4:0], 18'b0};
+		for (i=0;i<256;i++) begin
+		m = {i[7:0], 14'b0};
 		e = 128;
 
    	xi = {s[0],e[7:0],m};

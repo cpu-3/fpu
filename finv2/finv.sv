@@ -45,7 +45,7 @@ module mem(
 
 	reg [35:0] mem [0:1023];
 
-	initial $readmemb("/home/tansei/sandbox/fpu/finv2/finv2.bin", mem);
+	initial $readmemb("finv2.bin", mem);
 
 	always @ (posedge clk) begin
 		o_data <= mem[index];

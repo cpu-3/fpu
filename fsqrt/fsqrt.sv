@@ -36,7 +36,7 @@ module fsqrt(
 		s2 <= s1;
 		e2 <= {e1[6],~e1[6],e1[5:0]};
 		if (double) begin
-			calc <= {c,15'b0} + {{1'b1,g}*ar,1'b0};
+			calc <= {c,15'b0} + {1'b1,g}*ar*2;
 		end
 		else begin
 			calc <= {c,15'b0} + {1'b1,g}*ar;
@@ -54,7 +54,7 @@ module mem_sqrt(
 
 	reg [35:0] mem [0:1023];
 
-	initial $readmemb("sqrt_v2.bin", mem);
+	initial $readmemb("sqrt_v4.bin", mem);
 
 	always @ (posedge clk) begin
 		o_data <= mem[index];

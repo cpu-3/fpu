@@ -11,8 +11,8 @@ module test_random();
    int          s,e;
 	 wire					clk;
 	 reg					CLK;
-	 bit [22:0]		random;
-	 bit [8:0]		dum;
+	 bit [30:0]		random;
+	 bit					dum;
 
    assign x = xi;
 	 assign clk = CLK;
@@ -25,11 +25,8 @@ module test_random();
 		#1;
 		for (i=0;i<1024;i++) begin
 			{random,dum} = $urandom();
-			m = random;
-			e = 127;
 
- 	  	xi = {s[0],e[7:0],m};
-
+			xi = {s,random};
  	  	fx = $bitstoshortreal(xi);
 			fy = $sqrt(fx);
 			fybit = $shortrealtobits(fy);

@@ -23,7 +23,7 @@ module test_fsqrt();
 	 	s=0;
 		CLK = 0;
 		#1;
-		for (i=0;i<8388608;i++) begin
+		for (i=0;i<16777216;i++) begin
 			{random,dum} = $urandom();
 			m = i[22:0];
 			e = 127;

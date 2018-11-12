@@ -26,13 +26,13 @@ int main(){
 	x.f = 1.0;
 	p.f = 1.0;
 
-	x.i = x.i + 8192;
+	x.i = x.i + 16384;
 
 	for (i=0;i<1024;i++){
 		q.f = sqrt(p.f);
-		y.f = 1 / (x.f);
+		y.f = sqrt(x.f);
 		c = q.i & 0x007fffff;
-		g = (y.i & 0x007ffc00)/0x00000400;
+		g = (y.i - q.i)*2;
 
 		print_binary(c,23);
 		print_binary(g,13);

@@ -11,7 +11,7 @@ module finv(
 	wire [12:0] a;
 
 	assign {s,e,index,a} = x;
-	mem u1(clk, index, {c, g});
+	mem_sqrt u1(clk, index, {c, g});
 
 	reg s1;
 	reg [7:0] e1;
@@ -38,7 +38,7 @@ module finv(
 
 endmodule
 
-module mem(
+module mem_inv(
 	input wire clk,
 	input wire [9:0] index,
 	output reg [35:0] o_data);

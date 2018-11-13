@@ -24,8 +24,7 @@ module test_finv();
 		CLK = 0;
 		#1;
 		for (i=0;i<8388608;i++) begin
-			{random,dum} = $urandom();
-			m = random;
+			m = i[22:0];
 			e = 127;
 
  	  	xi = {s[0],e[7:0],m};

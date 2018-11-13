@@ -45,7 +45,7 @@ module mem_inv(
 
 	reg [35:0] mem [0:1023];
 
-	initial $readmemb("finv2.bin", mem);
+	initial $readmemb("inv_v4.bin", mem);
 
 	always @ (posedge clk) begin
 		o_data <= mem[index];

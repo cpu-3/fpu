@@ -30,19 +30,20 @@ module fsqrt(
 		// stage 1 fetch
 		s1 <= s;
 		ar <= a;
-		e1 <= e[6:0]-d;
+		e1 <= e-d;
 		double <= d;
 		// stage 2 mem
 		s2 <= s1;
 		e2 <= {e1[6],~e1[6],e1[5:0]};
-		if (double) begin
+		if (double)
 			calc <= {c,15'b0} + {1'b1,g}*ar*2;
-		end
-		else begin
+		else
 			calc <= {c,15'b0} + {1'b1,g}*ar;
-		end
 		// stage 3
-		y <= {s2,e2,calc[37:15]+calc[14]};
+		if (e2 == 8'b10111111)
+			y <= {s2,31'b0};
+		else
+			y <= {s2,e2,calc[37:15]+calc[14]};
 	end
 
 endmodule

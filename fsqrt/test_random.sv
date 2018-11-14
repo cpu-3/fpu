@@ -46,7 +46,7 @@ module test_random();
 			#1;
 			CLK = 0;
 			#1;
- 		 	$display("%d,%d", y, fybit);
+ 		 	$display("%d,%d,%d", xi, y, fybit);
 		end
 		$finish;
    end

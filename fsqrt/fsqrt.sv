@@ -5,45 +5,38 @@ module fsqrt(
 		input wire [31:0] x,
 		output reg [31:0] y);
 
-	wire s;
-	wire [6:0] e;
-	wire [9:0] index;
-	wire [13:0] a;
-	wire d;
+	reg s;
+	reg [6:0] e;
+	reg [9:0] i;
+	reg [13:0] a;
 
-	assign {s,e,index,a} = x;
-	assign d = ~index[9];
+	wire [9:0] index;
+	assign index = i;
+
 	mem_sqrt u1(clk, index, {c, g});
 
 	reg s1;
 	reg [6:0] e1;
+	reg d1;
+	reg [13:0] a1;
 	reg [22:0] c;
 	reg [12:0] g;
-	reg [13:0] ar;
-	reg double;
 	
-	reg s2;
-	reg [7:0] e2;
-	reg [37:0] calc;
+	wire [7:0] ey;
+	wire [37:0] calc;
+	assign ey = {e1[6],~e1[6],e1[5:0]};
+	assign calc = (d1)? {c,15'b0} + {1'b1,g,1'b0}*a1: {c,15'b0} + {1'b1,g}*a1;
 
 	always@(posedge clk) begin
-		// stage 1 fetch
+		// stage 0
+		{s,e,i,a} <= x;
+		// stage 1
 		s1 <= s;
-		ar <= a;
-		e1 <= e-d;
-		double <= d;
-		// stage 2 mem
-		s2 <= s1;
-		e2 <= {e1[6],~e1[6],e1[5:0]};
-		if (double)
-			calc <= {c,15'b0} + {1'b1,g}*ar*2;
-		else
-			calc <= {c,15'b0} + {1'b1,g}*ar;
-		// stage 3
-		if (e2 == 8'b10111111)
-			y <= {s2,31'b0};
-		else
-			y <= {s2,e2,calc[37:15]+calc[14]};
+		e1 <= e-(~i[9]);
+		d1 <= ~i[9];
+		a1 <= a;
+		// stage 2
+		y <= (ey == 8'b10111111)? {s1,31'b0}: {s1,ey,calc[37:15]+calc[14]};
 	end
 
 endmodule

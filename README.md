@@ -1,5 +1,5 @@
 ステージ数
-fadd2,finv2,fsqrt: 2
+fadd2,fmul,finv2,fsqrtすべて2
 
 finv2は仮数部上位10bit,fsqrtは指数部の最下位bitと仮数部上位9bitでblock ramを引いて、定数項と傾きを得て線形近似をしてyを求めています。
 

@@ -7,12 +7,14 @@ module fmul(
 		output reg [31:0] y);
 
 //stage 0
-	reg s1;
-	reg s2;
-	reg [7:0] e1;
-	reg [7:0] e2;
-	reg [22:0] m1;
-	reg [22:0] m2;
+	wire s1;
+	wire s2;
+	wire [7:0] e1;
+	wire [7:0] e2;
+	wire [22:0] m1;
+	wire [22:0] m2;
+	assign {s1,e1,m1} = x1;
+	assign {s2,e2,m2} = x2;
 
 //stage 1
 	reg sy;
@@ -33,9 +35,6 @@ module fmul(
 	assign ey = (eketa[8] & eketa[7])? 9'b111111111 :((eketa[8] | eketa[7])? eketa - 9'b001111111: 0);
 
 	always@(posedge clk) begin
-	//stage 0
-		{s1,e1,m1} <= x1;
-		{s2,e2,m2} <= x2;
 	//stage 1
 		sy <= s1 ^ s2;
 		esum <= e1 + e2;

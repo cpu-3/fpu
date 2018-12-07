@@ -6,8 +6,9 @@ module itof(
 		output reg [31:0] y);
 
 //stage 0
-	reg s;
-	reg [30:0] m;
+	wire s;
+	wire [30:0] m;
+	assign {s,m} = x;
 
 //stage 1
 	wire [30:0] mabs;
@@ -61,8 +62,6 @@ module itof(
 	assign my = ENCODER(mabs);
 	
 	always@(posedge clk) begin
-	//stage 0 fetch
-		{s,m} <= x;
 	//stage 1
 		y <= (nonzero)? {s,my}: 31'b0;
 	end

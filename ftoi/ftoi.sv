@@ -6,9 +6,10 @@ module ftoi(
 		output reg [31:0] y);
 
 //stage 0
-	reg s;
-	reg [7:0] e;
-	reg [22:0] m;
+	wire s;
+	wire [7:0] e;
+	wire [22:0] m;
+	assign {s,e,m} = x;
 
 //stage 1
 	wire [7:0] shift;
@@ -23,8 +24,6 @@ module ftoi(
 	assign nonzero = e > 126;
 	
 	always@(posedge clk) begin
-	//stage 0 fetch
-		{s,e,m} <= x;
 	//stage 1
 		y <= (nonzero)? my: 31'b0;
 	end

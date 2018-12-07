@@ -5,13 +5,11 @@ module finv(
 		input wire [31:0] x,
 		output reg [31:0] y);
 
-	reg s;
-	reg [7:0] e;
-	reg [9:0] i;
-	reg [12:0] a;
-
-	wire [9:0] index;
-	assign index = i;
+	wire s;
+	wire [7:0] e;
+	wire [9:0] i;
+	wire [12:0] a;
+	assign {s,e,i,a} = x;
 
 	reg s1;
 	reg [7:0] e1;
@@ -19,14 +17,12 @@ module finv(
 	reg [22:0] c;
 	reg [12:0] g;
 	
-	mem_inv u1(clk, index, {c, g});
+	mem_inv u1(clk, i, {c, g});
 
 	wire [35:0] calc;
 	assign calc = {1'b1,c,12'b0} - g*a1;
 
 	always@(posedge clk) begin
-		// stage 0
-		{s,e,i,a} <= x;
 		// stage 1
 		s1 <= s;
 		e1 <= ~(e+1+((|i)||(|a)));

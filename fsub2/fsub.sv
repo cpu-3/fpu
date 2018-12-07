@@ -1,18 +1,20 @@
 `default_nettype none
 
-module fadd(
+module fsub(
 		input wire clk,
 		input wire [31:0] x1,
 		input wire [31:0] x2,
 		output reg [31:0] y);
 
 //stage 0
-	reg s1;
-	reg s2;
-	reg [7:0] e1;
-	reg [7:0] e2;
-	reg [22:0] m1;
-	reg [22:0] m2;
+	wire s1;
+	wire s2;
+	wire [7:0] e1;
+	wire [7:0] e2;
+	wire [22:0] m1;
+	wire [22:0] m2;
+	assign {s1,e1,m1} = x1;
+	assign {s2,e2,m2} = x2;
 
 //stage 1
 	wire [8:0] ediff;
@@ -82,21 +84,18 @@ module fadd(
 	assign ey = {1'b0,es} - {4'b0,ketaoti} + 1 + &(my[25:2]);
 
 	always@(posedge clk) begin
-	//stage 0 fetch
-		{s1,e1,m1} <= x1;
-		{s2,e2,m2} <= x2;
 	//stage 1
 		if (beq) begin
 			ms <= (|e1)? {2'b01,m1}: {2'b00,m1};
 			es <= e1;
 			ss <= s1;
-			si <= s2;
+			si <= ~s2;
 			mia <= (|e2)? {2'b01,m2,2'b0} >> shift: {2'b0,m2,2'b0} >> shift;
 		end
 		else begin
 			ms <= (|e2)? {2'b01,m2}: {2'b00,m2};
 			es <= e2;
-			ss <= s2;
+			ss <= ~s2;
 			si <= s1;
 			mia <= (|e1)? {2'b01,m1,2'b0} >> shift: {2'b0,m2,2'b0} >> shift;
 		end

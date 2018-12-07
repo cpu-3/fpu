@@ -5,15 +5,13 @@ module fsqrt(
 		input wire [31:0] x,
 		output reg [31:0] y);
 
-	reg s;
-	reg [6:0] e;
-	reg [9:0] i;
-	reg [13:0] a;
+	wire s;
+	wire [6:0] e;
+	wire [9:0] i;
+	wire [13:0] a;
+	assign {s,e,i,a} = x;
 
-	wire [9:0] index;
-	assign index = i;
-
-	mem_sqrt u1(clk, index, {c, g});
+	mem_sqrt u1(clk, i, {c, g});
 
 	reg s1;
 	reg [6:0] e1;
@@ -28,8 +26,6 @@ module fsqrt(
 	assign calc = (d1)? {c,15'b0} + {1'b1,g,1'b0}*a1: {c,15'b0} + {1'b1,g}*a1;
 
 	always@(posedge clk) begin
-		// stage 0
-		{s,e,i,a} <= x;
 		// stage 1
 		s1 <= s;
 		e1 <= e-(~i[9]);

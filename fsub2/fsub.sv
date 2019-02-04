@@ -6,7 +6,6 @@ module fsub(
 		input wire [31:0] x2,
 		output reg [31:0] y);
 
-//stage 0
 	wire s1;
 	wire s2;
 	wire [7:0] e1;
@@ -17,25 +16,34 @@ module fsub(
 	assign {s2,e2,m2} = x2;
 
 //stage 1
-	wire [8:0] ediff;
-	wire [7:0] ediffabs;
-	wire [4:0] shift;
-	wire beq;
-	assign ediff = {1'b1,e1} + {1'b0,~e2} + 1; // e1-e2
-	assign ediffabs = (ediff[8])? ~(ediff[7:0])+1: ediff[7:0]; // |e1-e2|
-	assign shift = (|ediffabs[7:5])? 5'd31 : ediffabs[4:0]; // shiftの量
-	assign beq = (|ediff)? ~ediff[8]: m1 > m2; // x1 >= x2?
+	wire b;
+	assign b = {e1,m1} > {e2,m2};
 
 	// s = sup; i = inf;
-	reg [7:0] es;
-	reg [24:0] ms;
-	reg [26:0] mia;
-	reg ss;
-	reg si;
+	wire [7:0] es;
+	wire [7:0] ei;
+	wire [22:0] ms;
+	wire [22:0] mi;
+	assign es = (b)? e1: e2;
+	assign ei = (b)? e2: e1;
+	assign ms = (b)? m1: m2;
+	assign mi = (b)? m2: m1;
 
-//stage 2
+	wire [7:0] ediff;
+	wire [4:0] shift;
+	assign ediff = es - ei;
+	assign shift = (|ediff[7:5])? 5'd31 : ediff[4:0];
+
+	wire [26:0] mia;
+	assign mia = (|ei)? {2'b1,mi,2'b0} >> shift: {2'b0,mi,2'b0} >> shift;
+
+	reg ssr;
+	reg [7:0] esr;
+	reg [24:0] msr;
+	reg [26:0] mir;
+
 	wire [26:0] calc;
-	assign calc = (ss==si)? ({ms,2'b0} + mia): ({ms,2'b0} - mia);
+	assign calc = {msr,2'b0} + mir;
 
 	function [4:0] ENCODER (
 		input [26:0] INPUT
@@ -69,7 +77,7 @@ module fsub(
 			27'b0000000000000000000000001zz: ENCODER = 5'b11000;
 			27'b00000000000000000000000001z: ENCODER = 5'b11001;
 			27'b000000000000000000000000001: ENCODER = 5'b11010;
-			27'b000000000000000000000000000: ENCODER = 5'b11011;
+			27'b000000000000000000000000000: ENCODER = 5'b11111;
 		endcase
 	end
 	endfunction
@@ -80,29 +88,20 @@ module fsub(
 	wire [26:0] my;
 	assign my = calc << ketaoti;
 
-	wire signed [8:0] ey;
+	wire [8:0] ey;
+	wire [7:0] eya;
 	assign ey = {1'b0,es} - {4'b0,ketaoti} + 1 + &(my[25:2]);
+	assign eya = (ey[8])? 8'b0: ey[7:0];
 
 	always@(posedge clk) begin
 	//stage 1
-		if (beq) begin
-			ms <= (|e1)? {2'b01,m1}: {2'b00,m1};
-			es <= e1;
-			ss <= s1;
-			si <= ~s2;
-			mia <= (|e2)? {2'b01,m2,2'b0} >> shift: {2'b0,m2,2'b0} >> shift;
-		end
-		else begin
-			ms <= (|e2)? {2'b01,m2}: {2'b00,m2};
-			es <= e2;
-			ss <= ~s2;
-			si <= s1;
-			mia <= (|e1)? {2'b01,m1,2'b0} >> shift: {2'b0,m2,2'b0} >> shift;
-		end
+		ssr <= (b)? s1: s2;
+		esr <= es;
+		msr <= (|es)? {2'b01,ms}: {2'b00,ms};
+		mir <= (s1 == s2)? ~mia + 1: mia;
 	//stage 2
-		y <= {ss,ey[7:0],my[25:3]+my[2]}; //round: 4 sya 5 nyu
+		y <= {ssr,eya,my[25:3]+my[2]}; //round: 4 sya 5 nyu
 	end
-
 endmodule
 
 `default_nettype wire

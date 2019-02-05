@@ -11,7 +11,8 @@ module fsqrt(
 	wire [13:0] a;
 	assign {s,e,i,a} = x;
 
-	mem_sqrt u1(clk, i, {c, g});
+	wire d;
+	assign d = ~(x[23])
 
 	reg s1;
 	reg [6:0] e1;
@@ -19,6 +20,8 @@ module fsqrt(
 	reg [13:0] a1;
 	reg [22:0] c;
 	reg [12:0] g;
+
+	mem_sqrt u1(clk, i, {c, g});
 	
 	wire [7:0] ey;
 	wire [37:0] calc;

@@ -12,7 +12,7 @@ module fsqrt(
 	assign {s,e,i,a} = x;
 
 	reg [36:0] mem [0:1023];
-	initial $readmemb("sqrt_v4.bin", mem);
+	initial $readmemb("sqrtinit.bin", mem);
 
 	reg s1;
 	reg [7:0] e1;

@@ -63,7 +63,7 @@ module itof(
 	
 	always@(posedge clk) begin
 	//stage 1
-		y <= (nonzero)? {s,my}: 31'b0;
+		y <= (nonzero)? {s,my}: 32'b0;
 	end
 
 endmodule

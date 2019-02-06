@@ -86,7 +86,7 @@ module fadd(
 	wire [4:0] ketaoti;
 	wire zero;
 	assign ketaoti = ENCODER(calc);
-	assign zero = &zero;
+	assign zero = &ketaoti;
 	
 	wire [26:0] my;
 	assign my = calc << ketaoti;

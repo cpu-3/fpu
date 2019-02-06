@@ -35,12 +35,13 @@ module fsub(
 	assign shift = (|ediff[7:5])? 5'd31 : ediff[4:0];
 
 	wire [26:0] mia;
-	assign mia = (|ei)? {2'b1,mi,2'b0} >> shift: {2'b0,mi,2'b0} >> shift;
+	assign mia = {2'b1,mi,2'b0} >> shift;
 
 	reg ssr;
 	reg [7:0] esr;
 	reg [24:0] msr;
 	reg [26:0] mir;
+	reg inonzero;
 
 	wire [26:0] calc;
 	assign calc = {msr,2'b0} + mir;
@@ -83,7 +84,9 @@ module fsub(
 	endfunction
 
 	wire [4:0] ketaoti;
+	wire zero;
 	assign ketaoti = ENCODER(calc);
+	assign zero = &ketaoti;
 	
 	wire [26:0] my;
 	assign my = calc << ketaoti;
@@ -99,8 +102,9 @@ module fsub(
 		esr <= es;
 		msr <= (|es)? {2'b01,ms}: {2'b00,ms};
 		mir <= (s1 == s2)? ~mia + 1: mia;
+		inonzero <= |ei;
 	//stage 2
-		y <= {ssr,eya,my[25:3]+my[2]}; //round: 4 sya 5 nyu
+		y <= (inonzero)? ((zero)? {ssr,31'b0}: {ssr,eya,my[25:3]+my[2]}): {ssr,esr,msr[22:0]}; //round: 4 sya 5 nyu
 	end
 endmodule
 

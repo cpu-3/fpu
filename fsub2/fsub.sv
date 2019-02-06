@@ -7,13 +7,15 @@ module fsub(
 		output reg [31:0] y);
 
 	wire s1;
+	wire s2n;
 	wire s2;
 	wire [7:0] e1;
 	wire [7:0] e2;
 	wire [22:0] m1;
 	wire [22:0] m2;
 	assign {s1,e1,m1} = x1;
-	assign {s2,e2,m2} = x2;
+	assign {s2n,e2,m2} = x2;
+	assign s2 = ~s2n;
 
 //stage 1
 	wire b;
@@ -101,7 +103,7 @@ module fsub(
 		ssr <= (b)? s1: s2;
 		esr <= es;
 		msr <= (|es)? {2'b01,ms}: {2'b00,ms};
-		mir <= (s1 == s2)? ~mia + 1: mia;
+		mir <= (s1 == s2)? mia: ~mia + 1;
 		inonzero <= |ei;
 	//stage 2
 		y <= (inonzero)? ((zero)? {ssr,31'b0}: {ssr,eya,my[25:3]+my[2]}): {ssr,esr,msr[22:0]}; //round: 4 sya 5 nyu

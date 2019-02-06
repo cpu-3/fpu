@@ -25,7 +25,7 @@ module ftoi(
 	
 	always@(posedge clk) begin
 	//stage 1
-		y <= (nonzero)? my: 31'b0;
+		y <= (nonzero)? my: 32'b0;
 	end
 
 endmodule

@@ -32,19 +32,20 @@ module fadd(
 	wire [7:0] ediff;
 	wire [4:0] shift;
 	assign ediff = es - ei;
-	assign shift = (|ediff[7:5])? 5'd31 : ediff[4:0];
+	assign shift = ediff[4:0];
 
 	wire [26:0] mia;
 	assign mia = {2'b1,mi,2'b0} >> shift;
 
 	reg ssr;
 	reg [7:0] esr;
-	reg [24:0] msr;
+	reg [22:0] msr;
 	reg [26:0] mir;
+	reg sub;
 	reg inonzero;
 
 	wire [26:0] calc;
-	assign calc = {msr,2'b0} + mir;
+	assign calc = (sub)? {2'b1,msr,2'b0} - mir: {2'b1,msr,2'b0} + mir;
 
 	function [4:0] ENCODER (
 		input [26:0] INPUT
@@ -84,9 +85,9 @@ module fadd(
 	endfunction
 
 	wire [4:0] ketaoti;
-	wire zero;
+	wire nonzero;
 	assign ketaoti = ENCODER(calc);
-	assign zero = &ketaoti;
+	assign nonzero = |calc;
 	
 	wire [26:0] my;
 	assign my = calc << ketaoti;
@@ -99,12 +100,13 @@ module fadd(
 	always@(posedge clk) begin
 	//stage 1
 		ssr <= (b)? s1: s2;
+		sub <= s1 ^ s2;
 		esr <= es;
-		msr <= (|es)? {2'b01,ms}: {2'b00,ms};
-		mir <= (s1 == s2)? mia: ~mia + 1;
-		inonzero <= |ei;
+		msr <= ms;
+		mir <= mia;
+		inonzero <= (|ei) & (~(|ediff[7:5]));
 	//stage 2
-		y <= (inonzero)? ((zero)? {ssr,31'b0}: {ssr,eya,my[25:3]+my[2]}): {ssr,esr,msr[22:0]}; //round: 4 sya 5 nyu
+		y <= (inonzero)? ((nonzero)? {ssr,eya,my[25:3]+my[2]}: {ssr,31'b0}): {ssr,esr,msr};
 	end
 endmodule
 

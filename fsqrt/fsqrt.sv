@@ -16,10 +16,11 @@ module fsqrt(
 
 	reg s1;
 	reg [6:0] e1;
-	reg d1;
 	reg [13:0] a1;
 	reg [22:0] c;
 	reg [12:0] g;
+
+	reg d1;
 
 	mem_sqrt u1(clk, i, {c, g});
 	
@@ -31,9 +32,9 @@ module fsqrt(
 	always@(posedge clk) begin
 		// stage 1
 		s1 <= s;
-		e1 <= e-(~i[9]);
-		d1 <= ~i[9];
+		e1 <= e - (~i[9]);
 		a1 <= a;
+		d1 <= d;
 		// stage 2
 		y <= (ey == 8'b10111111)? {s1,31'b0}: {s1,ey,calc[37:15]+calc[14]};
 	end

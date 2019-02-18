@@ -95,7 +95,7 @@ module fsub(
 
 	wire [8:0] ey;
 	wire [7:0] eya;
-	assign ey = {1'b0,es} - {4'b0,ketaoti} + 1 + &(my[25:2]);
+	assign ey = {1'b0,esr} - {4'b0,ketaoti} + 1 + &(my[25:2]);
 	assign eya = (ey[8])? 8'b0: ey[7:0];
 
 	always@(posedge clk) begin
